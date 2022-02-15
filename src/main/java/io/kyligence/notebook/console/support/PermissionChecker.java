@@ -5,6 +5,7 @@ import io.kyligence.notebook.console.exception.ErrorCodeEnum;
 import io.kyligence.notebook.console.service.UserService;
 import io.kyligence.notebook.console.util.Base64Utils;
 import io.kyligence.notebook.console.util.WebUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class PermissionChecker {
 
+    public static final String SESSION_USERNAME_ATTR_KEY = "username_attr";
     @Autowired
     private UserService userService;
 
@@ -42,7 +44,8 @@ public class PermissionChecker {
         }
 
         // 2. check session
-        Object sessionUser = request.getSession().getAttribute("username");
+
+        Object sessionUser = request.getSession().getAttribute(SESSION_USERNAME_ATTR_KEY);
         if (sessionUser != null && StringUtils.isNotEmpty(sessionUser.toString())) {
             WebUtils.setCurrentLoginUser(sessionUser.toString());
             return joinPoint.proceed();
