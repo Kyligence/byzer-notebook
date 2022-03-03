@@ -105,7 +105,7 @@ public class UserController {
     @Async
     protected void postSignup(String user) {
         log.info("skip create sample for: " + user);
-        // notebookHelper.createSampleDemo(user);
+        notebookHelper.createSampleDemo(user);
     }
 
 

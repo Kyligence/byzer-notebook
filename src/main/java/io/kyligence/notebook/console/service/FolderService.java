@@ -95,7 +95,7 @@ public class FolderService {
 
         // if trans here, can not figure out type: notebook/workflow
         NotebookTreeDTO userFiles = NotebookTreeDTO.valueOf(execFiles, folders);
-        userFiles.getList().add(0, fileShareService.getDemo());
+//        userFiles.getList().add(0, fileShareService.getDemo());
         return userFiles;
     }
 

@@ -1,0 +1,67 @@
+{
+  "id" : "34",
+  "name" : "05_Demo_MultiCloudAnalysis",
+  "user" : "wenzheng.liu@kyligence.io",
+  "cell_list" : [ {
+    "id" : "222",
+    "content" : "--%markdown## 多云平台账单融合分析\n\n1. 使用 Kyligence Zen 创建 Azure 和 AWS 账单数据源\n2. 加载 Azure 账单文件，提取关键字段信息，并转化成中间表\n3. 加载 AWS 账单文件，提取关键字段信息，并转化成中间表，列信息保持和 Azure 一致\n4. 将 Azure 和 AWS 的中间表存储到相同的 CSV 文件中\n5. 简单分析不同平台每天的花费\n6. 在 Kyligence Zen 的数据源页面用合并的账单文件创建指标进行分析",
+    "job_id" : "40dbc1d7-68ca-41eb-991e-45758c4775ff"
+  }, {
+    "id" : "230",
+    "content" : "--%markdown### 1. 使用 Kyligence Zen 创建 Azure 和 AWS 账单数据源\n\n在 Kyligence Zen 添加数据源页面找到 Azure 和 AWS 账单入口，填写相关信息，即可加载数据。\n> 请注意，本示例中使用的是虚拟账单文件，以下脚本需要替换成真实账单的路径。",
+    "job_id" : "f13e1c19-f44f-46c8-bd8b-652b84c0c366"
+  }, {
+    "id" : "231",
+    "content" : "--%markdown### 2. 加载 Azure 账单文件，提取关键字段信息，并转化成中间表\n\n- 使用 load 语句进行加载，注意 Azure 账单路径存储在 /azure/{Enrollment Number} 下\n- 使用 select 语句进行提取转换，json 内容的字段需要使用 get_json_object 方法",
+    "job_id" : null
+  }, {
+    "id" : "234",
+    "content" : "-- 路径替换成 load csv.`/azure/{erollment num}/`\nload csv.`/tmp/upload/azure-cn-billing-2022-01-01.csv`\nwhere header = \"true\"\nand quote = '''\"'''\nand escape = '''\"'''\nas azure_bill_raw_data;\n\nselect * from azure_bill_raw_data limit 10 as azure_bill_sample_data;",
+    "job_id" : "5ddfca4a-faf4-4ae7-a821-1b2dcb09b393"
+  }, {
+    "id" : "235",
+    "content" : "-- 如果有更多需要分析的字段，请在下方添加\n-- tag 中的内容可用 get_json_object 提取\nselect \"azure\" as platform,\ndate(`Date`) as bill_date,\n`Meter ID` as resource_id,\n`Product` as product_name,\n`Cost` as cost,\nget_json_object(`Tags`, '$.CRR') as crr,\nget_json_object(`Tags`, '$.Owner') as owner,\nget_json_object(`Tags`, '$.Project') as project,\nget_json_object(`Tags`, '$.Cost Center') as cost_center\nfrom azure_bill_raw_data\nas azure_bill_transfered_data;\n",
+    "job_id" : "9dd5c661-2acb-4732-9667-5bd60851f344"
+  }, {
+    "id" : "236",
+    "content" : "--%markdown### 3. 加载 AWS 账单文件，提取关键字段信息，并转化成中间表\n\n- 使用 load 语句进行加载，注意 AWS 账单路径存储在 /datasources/aws/{region}/{accountId} 下\n- 使用 select 语句进行提取转换",
+    "job_id" : null
+  }, {
+    "id" : "233",
+    "content" : "load csv.`/tmp/upload/aws-billing-2022-01-01.csv`\nwhere header = \"true\"\nand quote = '''\"'''\nand escape = '''\"'''\nas aws_bill_raw_data;\n\nselect * from aws_bill_raw_data limit 10 as aws_bill_sample_data;",
+    "job_id" : "4ac38d87-910b-44eb-8dd3-be16e8d90c8c"
+  }, {
+    "id" : "237",
+    "content" : "select \"aws\" as platform,\ndate(`UsageEndDate`) as bill_date,\n`ResourceId` as resource_id,\n`ProductName` as product_name,\n`cost` as cost,\n`user:CRR` as crr,\n`user:Owner` as owner,\n`user:Project` as project,\n`user:Cost Center` as cost_center\nfrom aws_bill_raw_data\nas aws_bill_transfered_data;\n",
+    "job_id" : "04827876-3035-42a3-bc10-4603ad8a3641"
+  }, {
+    "id" : "238",
+    "content" : "--%markdown### 4. 将 Azure 和 AWS 的中间表存储到相同的 CSV 文件中\n\n- 注意保存 CSV 时，需要将 header 一并写入\n- save 有 append 和 overwrite 两种模式，使用 overwrite 会将之前生成的 CSV 文件清空，并追加本次执行生成的内容。使用 append 则会在原有的 CSV 文件上追加本次执行生成的内容，如果多次执行可能导致数据重复",
+    "job_id" : null
+  }, {
+    "id" : "239",
+    "content" : "save append azure_bill_transfered_data as csv.`bill_data.csv` where header = \"true\";",
+    "job_id" : "1400a9a8-ce19-4b66-9805-d68657161b09"
+  }, {
+    "id" : "240",
+    "content" : "save append aws_bill_transfered_data as csv.`bill_data.csv` where header = \"true\";",
+    "job_id" : "46ad42ae-0b29-461a-b6e0-96570dc13009"
+  }, {
+    "id" : "241",
+    "content" : "--%markdown### 5. 简单分析不同平台每天的花费\n\n- 使用 load 语句加载数据\n- 使用 select 语句分析不同平台每天的花费",
+    "job_id" : null
+  }, {
+    "id" : "242",
+    "content" : "load csv.`bill_data.csv` where header = \"true\" as bill_data;",
+    "job_id" : "f5b28589-a635-4362-8bc0-b82bf3268d22"
+  }, {
+    "id" : "243",
+    "content" : "select platform, bill_date, sum(cost) from bill_data where crr is null group by platform, bill_date\nas result;",
+    "job_id" : "579e23c0-9600-48d3-b6eb-eeb373c4bf59"
+  }, {
+    "id" : "267",
+    "content" : "--%markdown### 6. 在 Kyligence Zen 的数据源页面用合并的账单文件创建指标进行分析\n\n回到  Kyligence Zen 的数据源页面，找到刚才生成的 bill_data.csv，接下来就添加指标进行分析吧。",
+    "job_id" : "e72b7c80-8c82-4390-818e-46fbb3ba2105"
+  } ],
+  "is_demo" : null
+}
