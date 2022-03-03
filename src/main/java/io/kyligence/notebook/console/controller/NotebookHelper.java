@@ -4,7 +4,9 @@ import io.kyligence.notebook.console.bean.dto.CellInfoDTO;
 import io.kyligence.notebook.console.bean.dto.NotebookDTO;
 import io.kyligence.notebook.console.bean.dto.WorkflowDTO;
 import io.kyligence.notebook.console.bean.entity.CellInfo;
+import io.kyligence.notebook.console.bean.entity.NotebookFolder;
 import io.kyligence.notebook.console.bean.entity.NotebookInfo;
+import io.kyligence.notebook.console.service.FolderService;
 import io.kyligence.notebook.console.service.UploadFileService;
 import io.kyligence.notebook.console.service.NotebookService;
 import io.kyligence.notebook.console.service.WorkflowService;
@@ -36,6 +38,11 @@ public class NotebookHelper {
 
     @Autowired
     private UploadFileService uploadFileService;
+
+    @Autowired
+    private FolderService folderService;
+
+    private static final String DEMO_FOLDER_NAME = "Online_Demos";
 
     @Transactional
     protected NotebookInfo importNotebook(NotebookDTO notebookDTO, Integer folderId, String type, String user) {
@@ -105,16 +112,22 @@ public class NotebookHelper {
         String NOTEBOOK_HOME = System.getProperty("NOTEBOOK_HOME");
         File demoDir = new File(NOTEBOOK_HOME + "/sample");
         List<File> demoFiles = Arrays.stream(demoDir.listFiles()).sorted().collect(Collectors.toList());
+
+        NotebookFolder notebookFolder = folderService.findFolder(user, DEMO_FOLDER_NAME);
+        if (notebookFolder == null) {
+            notebookFolder = folderService.createFolder(user, DEMO_FOLDER_NAME);
+        }
+
         for (File demo : demoFiles) {
             try (FileInputStream in = new FileInputStream(demo)) {
                 log.info("Import File: " + demo.getName());
                 if (demo.getName().endsWith(".mlnb") || demo.getName().endsWith(".bznb")) {
                     NotebookDTO notebookDTO = JacksonUtils.readJson(in, NotebookDTO.class);
-                    NotebookInfo nb= importNotebook(notebookDTO, null, "default", username);
+                    NotebookInfo nb = importNotebook(notebookDTO, notebookFolder.getId(), "default", username);
                     if (result == null) result = nb;
                 } else if (demo.getName().endsWith(".mlwf") || demo.getName().endsWith(".bzwf")){
                     WorkflowDTO workflowDTO = JacksonUtils.readJson(in, WorkflowDTO.class);
-                    workflowService.importWorkflow(workflowDTO, null, "default", username);
+                    workflowService.importWorkflow(workflowDTO, notebookFolder.getId(), "default", username);
                 }
 
             } catch (Exception e) {
