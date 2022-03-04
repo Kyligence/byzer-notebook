@@ -27,8 +27,8 @@ public class FolderService {
     @Autowired
     private WorkflowService workflowService;
 
-    @Autowired
-    private FileShareService fileShareService;
+//    @Autowired
+//    private FileShareService fileShareService;
 
     @Transactional
     public NotebookFolder createFolder(String user, String folderPath) {
