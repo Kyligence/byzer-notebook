@@ -113,3 +113,12 @@ management:
   endpoint:
     shutdown:
       enabled: false
+
+saas:
+  nacos:
+    discovery:
+      group: ${notebook.nacos.group}
+      public-group: ${notebook.nacos.public-group}
+      application:
+        name: ${notebook.nacos.name}
+    server-addr: ${notebook.nacos.host}

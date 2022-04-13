@@ -23,3 +23,8 @@ notebook.redis.host=localhost
 notebook.redis.port=6379
 notebook.redis.password=redis_pwd
 notebook.redis.database=0
+
+notebook.nacos.group=gateway-service-dev
+notebook.nacos.public-group=saas-kyiam
+notebook.nacos.name=byzer
+notebook.nacos.host=nacos-headless.nacos:8848

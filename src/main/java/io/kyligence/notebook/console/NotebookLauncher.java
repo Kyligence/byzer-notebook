@@ -2,6 +2,8 @@ package io.kyligence.notebook.console;
 
 
 import io.kyligence.notebook.console.filter.UrlFilter;
+import io.kyligence.saas.iam.sdk.filter.AuthenticationProcessingFilter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -25,6 +27,16 @@ public class NotebookLauncher {
         registration.addUrlPatterns("/*");
         registration.setName("UrlFilter");
         registration.setOrder(1);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<AuthenticationProcessingFilter> authFilter() {
+        FilterRegistrationBean<AuthenticationProcessingFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new AuthenticationProcessingFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("AuthenticationProcessingFilter");
+        registration.setOrder(2);
         return registration;
     }
 
