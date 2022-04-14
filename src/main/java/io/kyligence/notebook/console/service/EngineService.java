@@ -7,6 +7,8 @@ import io.kyligence.notebook.console.exception.EngineAccessException;
 import io.kyligence.notebook.console.exception.ErrorCodeEnum;
 import io.kyligence.notebook.console.scalalib.hint.HintManager;
 import io.kyligence.notebook.console.util.WebUtils;
+import io.kyligence.saas.iam.pojo.AuthInfo;
+import io.kyligence.saas.iam.sdk.context.AuthContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -116,15 +118,15 @@ public class EngineService {
             params.put("home", config.getUserHome());
             params.put("outputSize", config.getOutputSize());
 
-            String username = null;
+            AuthInfo userInfo = null;
             try {
-                username = WebUtils.getCurrentLoginUser();
+                userInfo = AuthContextHolder.getContext();
             } catch (Exception e) {
                 log.error("error when get username");
             }
-            if (username != null) {
-                params.put("owner", username.toLowerCase());
-                params.put("defaultPathPrefix", config.getUserHome() + "/" + username);
+            if (userInfo != null) {
+                params.put("owner", userInfo.getUsername().toLowerCase());
+                params.put("defaultPathPrefix", config.getUserHome() + "/" + userInfo.getEntityId());
             }
         }
 

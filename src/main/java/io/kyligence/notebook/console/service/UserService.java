@@ -2,13 +2,8 @@ package io.kyligence.notebook.console.service;
 
 import io.kyligence.notebook.console.NotebookConfig;
 import io.kyligence.notebook.console.bean.entity.UserAction;
-import io.kyligence.notebook.console.bean.entity.UserInfo;
 import io.kyligence.notebook.console.bean.model.UploadedFiles;
 import io.kyligence.notebook.console.dao.UserActionRepository;
-import io.kyligence.notebook.console.dao.UserInfoRepository;
-import io.kyligence.notebook.console.exception.ByzerException;
-import io.kyligence.notebook.console.exception.ErrorCodeEnum;
-import io.kyligence.notebook.console.support.EncryptUtils;
 import io.kyligence.notebook.console.util.JacksonUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,46 +16,11 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private UserInfoRepository userInfoRepository;
-
-    @Autowired
     private UserActionRepository userActionRepository;
 
     private static NotebookConfig config = NotebookConfig.getInstance();
 
-    public Integer auth(String user, String pwd) {
-        UserInfo userInfo = findUserByName(user);
 
-        if (userInfo == null) {
-            throw new ByzerException(ErrorCodeEnum.AUTH_FAILED);
-        }
-
-        String encryptPwd = EncryptUtils.encrypt(pwd);
-
-        if (!userInfo.getPassword().equals(encryptPwd)) {
-            throw new ByzerException(ErrorCodeEnum.AUTH_FAILED);
-        }
-
-        return userInfo.getId();
-    }
-
-    public UserInfo findUserByName(String name) {
-        List<UserInfo> userInfoList = userInfoRepository.findByName(name);
-        return userInfoList == null || userInfoList.size() == 0 ? null : userInfoList.get(0);
-    }
-
-    public UserInfo createUser(UserInfo userInfo) {
-        UserInfo user = findUserByName(userInfo.getName());
-        if (user != null) {
-            throw new ByzerException(ErrorCodeEnum.USER_ALREADY_EXIST);
-        }
-
-        return userInfoRepository.save(userInfo);
-    }
-
-    public UserInfo updateUser(UserInfo userInfo){
-        return userInfoRepository.save(userInfo);
-    }
 
     public UserAction getUserAction(String user) {
         List<UserAction> userActions = userActionRepository.findByUser(user);
