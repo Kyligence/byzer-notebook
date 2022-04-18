@@ -2,30 +2,21 @@ package io.kyligence.notebook.console.controller;
 
 import io.kyligence.notebook.console.bean.dto.Response;
 import io.kyligence.notebook.console.bean.dto.UserInfoDTO;
-import io.kyligence.notebook.console.bean.dto.UserRegisterAndResetDTO;
-import io.kyligence.notebook.console.bean.dto.req.UserJoinReq;
-import io.kyligence.notebook.console.exception.ByzerException;
-import io.kyligence.notebook.console.exception.ErrorCodeEnum;
 import io.kyligence.notebook.console.service.UserService;
 import io.kyligence.notebook.console.support.Permission;
-import io.kyligence.notebook.console.util.Base64Utils;
-import io.kyligence.notebook.console.support.EncryptUtils;
-import io.kyligence.notebook.console.util.JacksonUtils;
-import io.kyligence.notebook.console.util.WebUtils;
 import io.kyligence.saas.iam.pojo.AuthInfo;
 import io.kyligence.saas.iam.sdk.context.AuthContextHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.SneakyThrows;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Validated
@@ -33,6 +24,8 @@ import java.sql.Timestamp;
 @RequestMapping("api")
 @Api("The documentation about operations on user")
 public class UserController {
+
+    public static final String IAM_TOKEN = "IAM_TOKEN";
 
     @Autowired
     private UserService userService;
@@ -60,6 +53,19 @@ public class UserController {
         return new Response<UserInfoDTO>().data(UserInfoDTO.valueOf(userInfo));
     }
 
+    @ApiOperation("user logout")
+    @DeleteMapping("/user/authentication")
+    @Permission
+    public Response<String> logout(HttpServletResponse resp) {
+        Cookie cookie = new Cookie(IAM_TOKEN, null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        resp.addCookie(cookie);
+        return new Response<String>().data("");
+    }
 
 
 }

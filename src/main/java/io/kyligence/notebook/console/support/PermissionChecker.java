@@ -1,5 +1,7 @@
 package io.kyligence.notebook.console.support;
 
+import io.kyligence.notebook.console.exception.AccessDeniedException;
+import io.kyligence.notebook.console.exception.ErrorCodeEnum;
 import io.kyligence.notebook.console.util.WebUtils;
 
 import io.kyligence.saas.iam.pojo.AuthInfo;
@@ -17,7 +19,7 @@ public class PermissionChecker {
     public Object check(ProceedingJoinPoint joinPoint) throws Throwable {
         AuthInfo userInfo = AuthContextHolder.getContext();
         if (userInfo == null) {
-            return null;
+            throw new AccessDeniedException(ErrorCodeEnum.ACCESS_DENIED);
         }
         WebUtils.setCurrentLoginUser(userInfo.getUsername());
         return joinPoint.proceed();

@@ -15,7 +15,7 @@ cd ${root_dir} && echo ${root_dir}
 if [[ ! -d byzer-notebook-vue/.git ]]; then
     echo "cloning byzer-notebook-vue repo..."
     # build front
-    git clone -b "${FRONTEND_BRANCH:-"main"}" https://github.com/byzer-org/byzer-notebook-vue.git
+    git clone -b "${FRONTEND_BRANCH:-"main"}" git@github.com:Kyligence/byzer-notebook-vue.git
 else
     echo "update byzer-notebook-vue to latest..."
     ( cd byzer-notebook-vue && git reset --hard && git checkout main && git pull -r origin main )
