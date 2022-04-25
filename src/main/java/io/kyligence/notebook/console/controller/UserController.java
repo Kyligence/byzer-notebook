@@ -43,7 +43,7 @@ public class UserController {
 
 
     @ApiOperation("import sample")
-    @PostMapping("/import/sample")
+    @PostMapping("/sample/import")
     @Permission
     protected void postSignup() {
         AuthInfo userInfo = AuthContextHolder.getContext();
