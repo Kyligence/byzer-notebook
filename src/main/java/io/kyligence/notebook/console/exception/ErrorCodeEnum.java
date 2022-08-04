@@ -148,6 +148,10 @@ public enum ErrorCodeEnum {
 
     Forbidden("403", "Authorization failed", "{}"),
 
+    /**
+     * Zen Exception
+     */
+    TENANT_ID_NOT_FOUND("KN_1019001", "Cannot find TenantId", "Unable to find tenantId")
     ;
 
     private final String code;
