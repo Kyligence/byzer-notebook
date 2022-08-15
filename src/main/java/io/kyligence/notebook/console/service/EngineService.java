@@ -6,6 +6,7 @@ import io.kyligence.notebook.console.exception.ByzerException;
 import io.kyligence.notebook.console.exception.EngineAccessException;
 import io.kyligence.notebook.console.exception.ErrorCodeEnum;
 import io.kyligence.notebook.console.scalalib.hint.HintManager;
+import io.kyligence.notebook.console.service.hook.ExecutionHookRegistry;
 import io.kyligence.notebook.console.util.WebUtils;
 import io.kyligence.saas.iam.pojo.AuthInfo;
 import io.kyligence.saas.iam.sdk.context.AuthContextHolder;
@@ -30,11 +31,16 @@ public class EngineService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ExecutionHookRegistry executionHookRegistry;
+
     public String execute(RunScriptParams params, String url, SqlHint sqlHint){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         sqlHint.apply();
+
+        executionHookRegistry.runBeforeExecutionHooks(params);
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         params.getAll().forEach(map::add);
@@ -114,7 +120,11 @@ public class EngineService {
             params.put("callback", config.getNotebookUrl() + "/api/job/callback");
             params.put("async", "true");
             params.put("sessionPerUser", "true");
-            params.put("defaultPathPrefix", "/mlsql");
+            // Updated by jiachua.zhu 2022-08-04
+            // defaultPathPrefix is no longer passed from here. ZenTenantHook passes
+            // it to byzer-lang.
+            // Requirement: https://kyligence.feishu.cn/wiki/wikcnvEWIG1GJnQDEJjA3zO5NFd
+//            params.put("defaultPathPrefix", "/mlsql");
             params.put("home", config.getUserHome());
             params.put("outputSize", config.getOutputSize());
 
@@ -126,7 +136,7 @@ public class EngineService {
             }
             if (userInfo != null) {
                 params.put("owner", userInfo.getUsername().toLowerCase());
-                params.put("defaultPathPrefix", config.getUserHome() + "/" + userInfo.getEntityId());
+//                params.put("defaultPathPrefix", config.getUserHome() + "/" + userInfo.getEntityId());
             }
         }
 
