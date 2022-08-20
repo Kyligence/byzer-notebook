@@ -21,7 +21,7 @@ public class PermissionChecker {
         if (userInfo == null) {
             throw new AccessDeniedException(ErrorCodeEnum.ACCESS_DENIED);
         }
-        WebUtils.setCurrentLoginUser(userInfo.getUsername());
+        WebUtils.setCurrentLoginUser(userInfo.getEntityId());
         return joinPoint.proceed();
         }
     }

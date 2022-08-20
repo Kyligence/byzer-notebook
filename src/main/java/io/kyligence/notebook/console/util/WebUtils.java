@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class WebUtils {
 
-    private static final String LOGIN_USER_KEY = "username";
+    private static final String LOGIN_USER_KEY = "userId";
 
     public static HttpServletRequest getRequest() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -20,9 +20,9 @@ public class WebUtils {
         return attributes.getResponse();
     }
 
-    public static void setCurrentLoginUser(String username) {
+    public static void setCurrentLoginUser(String userId) {
         HttpServletRequest request = getRequest();
-        request.setAttribute(LOGIN_USER_KEY, username.toLowerCase());
+        request.setAttribute(LOGIN_USER_KEY, userId.toLowerCase());
     }
 
     public static String getCurrentLoginUser() {
