@@ -39,12 +39,12 @@ public class ZenTenantHook implements BeforeExecutionHook {
         if(StringUtils.isBlank( tenantId )) {
             throw new ZenException(ErrorCodeEnum.TENANT_ID_NOT_FOUND);
         }
-        String tenantIdStmt = "SET tenant_id = " + tenantId + ";";
+        String tenantIdStmt = "SET tenant_id = \"" + tenantId + "\";";
         log.info("tenantIdStmt {}", tenantIdStmt );
         AuthInfo userInfo = AuthContextHolder.getContext();
         String pathPrefixStmt = "SET path_prefix = "
-                + NotebookConfig.getInstance().getUserHome() + "/" + userInfo.getEntityId()
-                + ";";
+                + "\"" + NotebookConfig.getInstance().getUserHome() + "/" + userInfo.getEntityId()
+                + "\";";
         log.info("pathPrefixStmt {}", pathPrefixStmt);
 
         String originalSql = params.getAll().get("sql");
