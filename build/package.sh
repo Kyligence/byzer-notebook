@@ -15,12 +15,13 @@ cd ${root_dir} && echo ${root_dir}
 if [[ ! -d byzer-notebook-vue/.git ]]; then
     echo "cloning byzer-notebook-vue repo..."
     # build front
-    git clone -b "${FRONTEND_BRANCH:-"main"}" git@github.com:Kyligence/byzer-notebook-vue.git
+    git clone -b "${FRONTEND_BRANCH:-"main"}" https://github.com/Kyligence/byzer-notebook-vue.git
 else
     echo "update byzer-notebook-vue to latest..."
     ( cd byzer-notebook-vue && git reset --hard && git checkout main && git pull -r origin main )
 fi
 
+export API_BASE_URI=byzer
 cd ${root_dir}/byzer-notebook-vue && bash ./build/build.sh
 
 console_static_resources_dir=${root_dir}/src/main/resources/static &&
