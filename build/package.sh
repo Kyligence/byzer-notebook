@@ -21,7 +21,7 @@ else
     ( cd byzer-notebook-vue && git reset --hard && git checkout main && git pull -r origin main )
 fi
 
-export API_BASE_URI=byzer
+#export API_BASE_URI=byzer
 cd ${root_dir}/byzer-notebook-vue && bash ./build/build.sh
 
 console_static_resources_dir=${root_dir}/src/main/resources/static &&
