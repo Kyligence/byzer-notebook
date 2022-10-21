@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -e
 is_skip_tar="${1:-}"
 # Notebook absolute path

@@ -1,0 +1,66 @@
+mode: ContinuousDelivery
+branches:
+  main:
+    regex: ^(origin/)?master$|main$
+    mode: ContinuousDeployment
+    tag: alpha
+    increment: Minor
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
+    source-branches: []
+    tracks-release-branches: true
+    is-release-branch: false
+    is-mainline: false
+    pre-release-weight: 0
+  feature:
+    regex: ^(origin/)?feature?[/-]
+    mode: ContinuousDelivery
+    tag: feature
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    source-branches: [ 'main', 'qa', 'feature', 'hotfix', 'prod' ]
+    tracks-release-branches: false
+    is-release-branch: false
+    is-mainline: false
+    pre-release-weight: 30000
+  qa:
+    regex: ^(origin/)?qa$
+    mode: ContinuousDelivery
+    tag: beta
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    source-branches: [ 'main', 'prod', 'qa' ]
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 30000
+  hotfix:
+    regex: ^(origin/)?hotfix?[/-]
+    mode: ContinuousDelivery
+    tag: beta
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    source-branches: [ 'main', 'prod' ]
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 30000
+  prod:
+    regex: ^(origin/)?prod$
+    mode: ContinuousDelivery
+    tag: ga
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    source-branches: [ 'main', 'qa', 'hotfix' ]
+    tracks-release-branches: false
+    is-release-branch: false
+    is-mainline: true
+    pre-release-weight: 55000
+  pull-request: {}
+ignore:
+  sha: []
+merge-message-formats: {}
