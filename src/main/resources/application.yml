@@ -11,7 +11,7 @@ spring:
   profiles:
     active: @envs@
   application:
-    name: Kyligence Notebook
+    name: byzer
   jackson:
     serialization:
       indent_output: true
@@ -68,20 +68,6 @@ spring:
   mvc:
     async:
       request-timeout: 600000
-  redis:
-    database: ${notebook.redis.database}
-    host: ${notebook.redis.host}
-    port: ${notebook.redis.port}
-#    password: ${notebook.redis.password}
-    timeout: 20000ms
-    jedis:
-      pool:
-        max-active: 1000
-        max-wait: -1ms
-        max-idle: 10
-        min-idle: 5
-    session:
-      store-type: redis
   autoconfigure:
     exclude: @exclude_class@
 
@@ -116,9 +102,9 @@ management:
 
 saas:
   nacos:
+    config:
+      server-addr: ${notebook.nacos.host}
     discovery:
-      group: ${notebook.nacos.group}
-      public-group: ${notebook.nacos.public-group}
-      application:
-        name: ${notebook.nacos.name}
-    server-addr: ${notebook.nacos.host}
+      public-group: $ ${notebook.nacos.public-group}
+      server-addr: ${notebook.nacos.host}
+      group:  ${notebook.nacos.group}

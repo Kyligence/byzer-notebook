@@ -24,12 +24,9 @@ RUN apt-get update --fix-missing && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-## Input arguments
-ARG BYZER_NOTEBOOK_VERSION
-
 ## Environment variables
 ENV BASE_DIR=/home/deploy
-ENV BYZER_NOTEBOOK_VERSION=${BYZER_NOTEBOOK_VERSION} \
+ENV BYZER_NOTEBOOK_VERSION=1.0.2-SNAPSHOT \
     BYZER_NOTEBOOK_HOME=${BASE_DIR}/byzer-notebook
 
 WORKDIR ${BASE_DIR}
